@@ -1,12 +1,12 @@
 """Simple example showing how to get gamepad events."""
 
+#Varaibles for Packets
 from __future__ import print_function
-
-
 from inputs import get_gamepad
 from nrf24 import NRF24
 import time
-
+Xbox360 = [ "LeftJoyX","LeftJoyY", "LeftJoyClick" , "LeftTrig", "RightTrig", "RightBump","LeftBump","XboxButton","StartButton","MenuButton","XButton","YButton" ,"AButton","BButton" ,"DpadUp","DpadDown" ,"DpadLeft","DpadRight","RightJoyX","RightJoyY","RightJoyClick"]
+Xbox360Values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
 
 radio = NRF24()
@@ -32,8 +32,16 @@ def main():
         events = get_gamepad()
         for event in events:
             prin(event.ev_type, event.code, event.state)
+            if (event.ev_type == "Absolute"):
+                if(event.ev_type == "ABS_X"):
+                    LeftJoyX = event.state
+                 elif(event.ev_type == "ABS_Y"):
+                    LeftJoyY == event.state
+                 
 
-def vibrateleft(time):
+def ResetVarible():
+    #Varibles For Packets 0 = off 1 = on
+    def vibrateleft(time):
     gamepad.set_vibration(1, 0, time)
 
 def vibrateRight(time):
@@ -58,3 +66,4 @@ def Receive():
 
 if __name__ == "__main__":
     main()
+    ResetVarible()
