@@ -12,7 +12,8 @@ Values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Xbox360Values = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
 InputCodes = [ 'ABS_X', 'ABS_Y', 'BTN_THUMBL', 'ABS_Z', 'ABS_RZ', 'BTN_TR', 'BTN_TL', 'BTN_START', 'BTN_SELECT', 'BTN_WEST', 'BTN_NORTH', 'BTN_SOUTH', 'BTN_EAST', 'ABS_HAT0Y', 'ABS_HAT0X', 'ABS_RX', 'ABS_RY',"BTN_THUMBR"]
 JoySticks = [0,1,15,16]
-ToUpdate = []
+PreviousVals = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Update = []
 print("Xbox Codes Lengths: " + str(len(Xbox360)))
 print("Xbox Values Lengths: " + str(len(Values)))
 print("Input Codes Lengths: " + str(len(InputCodes)))
@@ -84,19 +85,25 @@ def GetEvents():
             Code = Xbox360Values[Place]
 
             if Place in JoySticks:
-                NewValue = (((event.state - -32762) * 255 )/ 65534)
+                NewValue = (((event.state - -32762) * 255 )/ 65555)
                 Values[Place] = round(NewValue)
                 print(Values)
             else:
                 Values[Place] = event.state
                 print(Values)
             v = 0 
-            for i in Values:
-                if i != PreviousValue[V]:
-                        ToUpdate.append(V)
-                
-                V =+ 1
-                
-            print(ToUpdate)
+           
+     Return(Values)
 while True:
-    GetEvents()
+        VALUES = GetEvents()  
+        while i =< 19:
+                if VALUES[i] != PreviousVals[i]:
+                        ToUpdate.append(i)
+                 
+                i =+ 1 
+         print(ToUpdate)
+         ToUpdate = []
+        
+        
+        
+        
