@@ -1,14 +1,28 @@
-"""Simple example showing how to get gamepad events."""
-
-#Varaibles for Packets
 from __future__ import print_function
+import inputs
 from inputs import get_gamepad
-from nrf24 import NRF24
+#from nrf24 import NRF24
 import time
-Xbox360 = [ "LeftJoyX","LeftJoyY", "LeftJoyClick" , "LeftTrig", "RightTrig", "RightBump","LeftBump","XboxButton","StartButton","MenuButton","XButton","YButton" ,"AButton","BButton" ,"DpadUp","DpadDown" ,"DpadLeft","DpadRight","RightJoyX","RightJoyY","RightJoyClick"]
-Xbox360Values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
+import sys
+# Set Code Conversion
+import colorama
 
+Xbox360 = [ "LeftJoyX","LeftJoyY", "LeftJoyClick" , "LeftTrig", "RightTrig", "RightBump","LeftBump","StartButton","MenuButton","XButton","YButton" ,"AButton","BButton" ,"dPadY","dPadx" ,"RightJoyX","RightJoyY","RightJoyClick","XboxButton"]
+Values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Xbox360Values = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+InputCodes = [ 'ABS_X', 'ABS_Y', 'BTN_THUMBL', 'ABS_Z', 'ABS_RZ', 'BTN_TR', 'BTN_TL', 'BTN_START', 'BTN_SELECT', 'BTN_WEST', 'BTN_NORTH', 'BTN_SOUTH', 'BTN_EAST', 'ABS_HAT0Y', 'ABS_HAT0X', 'ABS_RX', 'ABS_RY',"BTN_THUMBR"]
+JoySticks = [0,1,15,16]
+print("Xbox Codes Lengths: " + str(len(Xbox360)))
+print("Xbox Values Lengths: " + str(len(Values)))
+print("Input Codes Lengths: " + str(len(InputCodes)))
+time.sleep(2)
+# Initilize gamepad
+gamepad=None
+if not gamepad:
+        gamepad = inputs.devices.gamepads[0]
+colorama.init()
+# Start the Radio
+"""
 radio = NRF24()
 radio.begin(1, 0, "P8_23", "P8_24") #Set CE and IRQ pins
 radio.setRetries(15,15)
@@ -26,32 +40,28 @@ radio.stopListening()
 
 radio.printDetails()
 
-def main():
-    """Just print out some event infomation when the gamepad is used."""
-    while 1:
-        events = get_gamepad()
-        for event in events:
-            prin(event.ev_type, event.code, event.state)
-            if (event.ev_type == "Absolute"):
-                if(event.ev_type == "ABS_X"):
-                    LeftJoyX = event.state
-                 elif(event.ev_type == "ABS_Y"):
-                    LeftJoyY == event.state
-                 
 
-def ResetVarible():
-    #Varibles For Packets 0 = off 1 = on
-    def vibrateleft(time):
+"""
+def move_cursor(x,y):
+    print ("\x1b[{};{}H".format(y+1,x+1))
+
+def clear():
+    print ("\x1b[2J")
+
+
+
+def vibrateleft(time):
     gamepad.set_vibration(1, 0, time)
 
 def vibrateRight(time):
     gamepad.set_vibration(0, 1, time)
+
 def vibrateBoth(time):
     gamepad.set_vibration(1, 1, time)
-  
+
 def Transmit(data):
     radio.write(data)
-  
+
 def Receive():
     radio.startListening()
     pipe = [0]
@@ -62,8 +72,24 @@ def Receive():
     radio.read(recv_buffer)
 
     return recv_buffer
- 
 
-if __name__ == "__main__":
-    main()
-    ResetVarible()
+def GetEvents():
+    events = get_gamepad()
+
+    for event in events:
+        if event.code != "SYN_REPORT":
+            Place = InputCodes.index(event.code)
+            #print(Place)
+            Code = Xbox360Values[Place]
+
+            if Place in JoySticks:
+                NewValue = (((event.state - -32762) * 255 )/ 65534)
+                Values[Place] = round(NewValue)
+                print(Values)
+            else:
+                Values[Place] = event.state
+                print(Values)
+
+    
+while True:
+    GetEvents()
