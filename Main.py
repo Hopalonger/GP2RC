@@ -88,21 +88,19 @@ def GetEvents():
                 NewValue = (((event.state - -32762) * 255 )/ 65555)
                 Values[Place] = round(NewValue)
                 print(Values)
+                code = Xbox360Values[Place]
+                PartName = Xbox360[code]
+                print( str(Partname) + ": " + str(Values[Place]))
+                
             else:
                 Values[Place] = event.state
                 print(Values)
-            v = 0 
-           
-     Return(Values)
+                code = Xbox360Values[Place]
+                PartName = Xbox360[code]
+                print( str(Partname) + ": " + str(Values[Place]))
+            
 while True:
-        VALUES = GetEvents()  
-        while i =< 19:
-                if VALUES[i] != PreviousVals[i]:
-                        ToUpdate.append(i)
-                 
-                i =+ 1 
-         print(ToUpdate)
-         ToUpdate = []
+        GetEvents()
         
         
         
