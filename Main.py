@@ -89,15 +89,14 @@ def GetEvents():
             if Place in JoySticks:
                 NewValue = (((event.state - -32762) * 255 )/ 65555)
                 Values[Place] = round(NewValue)
-                print(Values)
+                #print(Values)
                 code = Xbox360Values[Place]
                 print( Xbox360[code] + ": " + str(Values[Place]))
                 
             else:
                 Values[Place] = event.state
-                print(Values)
+                #print(Values)
                 code = Xbox360Values[Place]
-               
                 print( Xbox360[code] + ": " + str(Values[Place]))
             
 while True:
