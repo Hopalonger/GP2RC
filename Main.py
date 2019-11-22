@@ -5,7 +5,6 @@ from inputs import get_gamepad
 import time
 import sys
 # Set Code Conversion
-import colorama
 
 Xbox360 = [ "LeftJoyX","LeftJoyY", "LeftJoyClick" , "LeftTrig", "RightTrig", "RightBump","LeftBump","StartButton","MenuButton","XButton","YButton" ,"AButton","BButton" ,"dPadY","dPadx" ,"RightJoyX","RightJoyY","RightJoyClick","XboxButton"]
 Values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -22,7 +21,7 @@ time.sleep(2)
 gamepad=None
 if not gamepad:
         gamepad = inputs.devices.gamepads[0]
-colorama.init()
+        
 # Start the Radio
 """
 radio = NRF24()
