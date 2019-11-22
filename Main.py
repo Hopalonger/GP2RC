@@ -79,25 +79,26 @@ def GetEvents():
     events = get_gamepad()
     PreviousValue = Values
     for event in events:
+        #Discard Sync Function
         if event.code != "SYN_REPORT":
             Place = InputCodes.index(event.code)
             #print(Place)
             Code = Xbox360Values[Place]
-
+            PartName = ""
+                #Remap Values to 0 - 255 instead of -32,000 - 32000
             if Place in JoySticks:
                 NewValue = (((event.state - -32762) * 255 )/ 65555)
                 Values[Place] = round(NewValue)
                 print(Values)
                 code = Xbox360Values[Place]
-                PartName = Xbox360[code]
-                print( str(Partname) + ": " + str(Values[Place]))
+                print( Xbox360[code] + ": " + str(Values[Place]))
                 
             else:
                 Values[Place] = event.state
                 print(Values)
                 code = Xbox360Values[Place]
-                PartName = Xbox360[code]
-                print( str(Partname) + ": " + str(Values[Place]))
+               
+                print( Xbox360[code] + ": " + str(Values[Place]))
             
 while True:
         GetEvents()
