@@ -1,12 +1,15 @@
 from __future__ import print_function
 import inputs
+import datetime
 from inputs import get_gamepad
 #from nrf24 import NRF24
 import time
 import sys
 # Set Code Conversion
-import colorama
+#import colorama
 Filename = 'Controller';
+PreviousValue = 0
+Average = 0
 Xbox360 = [ "LeftJoyX","LeftJoyY", "LeftJoyClick" , "LeftTrig", "RightTrig", "RightBump","LeftBump","StartButton","MenuButton","XButton","YButton" ,"AButton","BButton" ,"dPadY","dPadx" ,"RightJoyX","RightJoyY","RightJoyClick","XboxButton"]
 Values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Xbox360Values = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
@@ -15,13 +18,14 @@ JoySticks = [0,1,15,16]
 print("Xbox Codes Lengths: " + str(len(Xbox360)))
 print("Xbox Values Lengths: " + str(len(Values)))
 print("Input Codes Lengths: " + str(len(InputCodes)))
+
 time.sleep(2)
 # Initilize gamepad
 
 gamepad=None
 if not gamepad:
         gamepad = inputs.devices.gamepads[0]
-colorama.init()
+#colorama.init()
 # Start the Radio
 print("Running...")
 """
@@ -74,15 +78,28 @@ def Receive():
     radio.read(recv_buffer)
 
     return recv_buffer
-def Save(write):
+
+def Save(write,PreviousValue,Average):
     f = open(Filename + ".txt", "w")
     #print(str(write)[1:-1])
-    print(str(write)[1:-1], end="\r", flush=True)
+    After = datetime.datetime.now()
+    TimeDiffrence = After - Now
+    TimeDiffrence_ms = TimeDiffrence.total_seconds() * 1000
+
+    if(TimeDiffrence_ms > PreviousValue):
+        PreviousValue = TimeDiffrence_ms
+
+    Latency  = (str(TimeDiffrence_ms)[:5] + '..') if len(str(TimeDiffrence_ms)) > 5 else str(TimeDiffrence_ms)
+    MaxLatency  = (str(PreviousValue)[:5] + '..') if len(str(PreviousValue)) > 5 else str(PreviousValue)
+    Average  = (str(Average)[:5] + '..') if len(str(Average)) > 5 else str(Average)
+    Vroom = str(write)[1:-1] + " Latency: " + Latency + " (ms) Average Time: " + str(Average) + " (ms)"
+    print(Vroom  , end="\r", flush=True)
     f.write(str(write)[1:-1])
     f.close()
-
+    return PreviousValue
 
 def GetEvents():
+
     events = get_gamepad()
     for event in events:
         if event.code != "SYN_REPORT":
@@ -98,8 +115,14 @@ def GetEvents():
                 Values[Place] = event.state
             #    print(Values)
 
-
-
+i = 0
 while True:
+        Now = datetime.datetime.now()
         GetEvents()
-        Save(Values)
+        PreValue = PreviousValue
+        PreviousValue = Save(Values,PreviousValue,Average)
+        i += 1
+
+        Value = PreviousValue + PreValue
+
+        Average = Value / i
