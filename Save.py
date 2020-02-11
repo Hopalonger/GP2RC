@@ -80,7 +80,7 @@ def Receive():
     return recv_buffer
 
 def Save(write,PreviousValue,Average):
-    f = open(Filename + ".txt", "w")
+
     #print(str(write)[1:-1])
     After = datetime.datetime.now()
     TimeDiffrence = After - Now
@@ -94,6 +94,7 @@ def Save(write,PreviousValue,Average):
     Average  = (str(Average)[:5] + '..') if len(str(Average)) > 5 else str(Average)
     Vroom = str(write)[1:-1] + " Latency: " + Latency + " (ms) Average Time: " + str(Average) + " (ms)"
     print(Vroom  , end="\r", flush=True)
+    f = open(Filename + ".txt", "w")
     f.write(str(write)[1:-1])
     f.close()
     return PreviousValue
@@ -102,7 +103,7 @@ def GetEvents():
 
     events = get_gamepad()
     for event in events:
-        if event.code != "SYN_REPORT":
+        if event.code != "SYN_REPORT" and event.code != "SYN_DROPPED":
             Place = InputCodes.index(event.code)
             Code = Xbox360Values[Place]
 
@@ -122,7 +123,7 @@ while True:
         PreValue = PreviousValue
         PreviousValue = Save(Values,PreviousValue,Average)
         i += 1
-
+        time.sleep(.2)
         Value = PreviousValue + PreValue
 
         Average = Value / i
