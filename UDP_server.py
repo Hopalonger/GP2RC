@@ -12,7 +12,7 @@ Values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Xbox360Values = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
 InputCodes = [ 'ABS_X', 'ABS_Y', 'BTN_THUMBL', 'ABS_Z', 'ABS_RZ', 'BTN_TR', 'BTN_TL', 'BTN_START', 'BTN_SELECT', 'BTN_WEST', 'BTN_NORTH', 'BTN_SOUTH', 'BTN_EAST', 'ABS_HAT0Y', 'ABS_HAT0X', 'ABS_RX', 'ABS_RY',"BTN_THUMBR"]
 JoySticks = [0,1,15,16]
-CLIENT_IP = "192.168.1.160"
+CLIENT_IP = "192.168.0.101"
 UDP_PORT = 5005
 print( "UDP target IP:", CLIENT_IP)
 print( "UDP target port:", UDP_PORT)
