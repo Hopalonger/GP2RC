@@ -4,6 +4,8 @@ import RPi.GPIO as GPIO  # import gpio
 import time      #import time library
 import spidev
 from lib_nrf24 import NRF24
+import datetime, threading, time
+
 
 GPIO.setmode(GPIO.BCM)       # set the gpio mode
 
@@ -34,6 +36,7 @@ radio.printDetails()      # print basic detals of radio
 print("Transmitter Started, Ready To Send")
 
 time.sleep(2)
+i = 0
 # Initilize gamepad
 gamepad=None
 if not gamepad:
@@ -77,13 +80,14 @@ def UDP():
                      socket.SOCK_DGRAM) # UDP
     sock.sendto(str.encode(str(Packet)[1:-1]), (CLIENT_IP, UDP_PORT))
 def Transmit():
+    ++# IDEA:
     sendMessage = list(str(Packet)[1:-1])  #the message to be sent
     while len(sendMessage) < 32:
         sendMessage.append(0)
 
     start = time.time()      #start the time for checking delivery time
     radio.write(sendMessage)   # just write the message to radio
-    print("Sent the Packet: {}".format(sendMessage))  # print a message after succesfull send
+    #print("Sent the Packet: {}".fromat(str(Packet)[1:-1]))  # print a message after succesfull send
     radio.startListening()        # Start listening the radio
 
     while not radio.available(0):
@@ -91,9 +95,24 @@ def Transmit():
         if time.time() - start > 2:
             print("Timed out.")  # print errror message if radio disconnected or not functioning anymore
             break
+# Transmit On Specific Intervals to not overload system
+def TrasmitStart():
+    next_call = time.time()
+    while True:
+        print datetime.datetime.now()
+        Transmit()
+        next_call = next_call+1/100;
+        time.sleep(next_call - time.time())
+
+## Start Transmiter Loop
+timerThread = threading.Thread(target=TrasmitStart)
+timerThread.daemon = True
+timerThread.start()
 
 while True:
     #Now = datetime.datetime.now()
     GetEvents()
+    delay(15)
+    print(i)
     #PrintScreen()
-    Transmit()
+    #Transmit()
